@@ -777,3 +777,78 @@ func FuzzSlice(f *testing.F) {
 		Slice(f32, i, j)
 	})
 }
+
+func FuzzFilter(f *testing.F) {
+	f.Fuzz(func(t *testing.T, buf []byte) {
+		fuzzer := fuzz.NewFromGoFuzz(buf)
+		var f32 []float32
+		f := func (v float32, index int) bool {
+			return true
+		}
+		fuzzer.Fuzz(&f32)
+		Filter(f32, f)
+	})
+}
+
+func FuzzMap(f *testing.F) {
+	f.Fuzz(func(t *testing.T, buf []byte) {
+		fuzzer := fuzz.NewFromGoFuzz(buf)
+		var f32 []float32
+		f := func (v float32, index int) string {
+			return "x"
+		}
+		fuzzer.Fuzz(&f32)
+		Map(f32, f)
+	})
+}
+
+func FuzzFilterMap(f *testing.F) {
+	f.Fuzz(func(t *testing.T, buf []byte) {
+		fuzzer := fuzz.NewFromGoFuzz(buf)
+		var f32 []float32
+		f := func (v float32, index int) (string, bool) {
+			return "x", true
+		}
+		fuzzer.Fuzz(&f32)
+		FilterMap(f32, f)
+	})
+}
+
+func FuzzFlatMap(f *testing.F) {
+	f.Fuzz(func(t *testing.T, buf []byte) {
+		fuzzer := fuzz.NewFromGoFuzz(buf)
+		var f32 []float32
+		f := func (v float32, index int) []string {
+			return []string{"x"}
+		}
+		fuzzer.Fuzz(&f32)
+		FlatMap(f32, f)
+	})
+}
+
+// TODO: 
+// func FuzzTimes(f *testing.F) {
+// 	f.Fuzz(func(t *testing.T, buf []byte) {
+// 		fuzzer := fuzz.NewFromGoFuzz(buf)
+// 		var count int
+// 		f := func (index int) string {
+// 			return "x"
+// 		}
+// 		fuzzer.Fuzz(&count)
+// 		Times(count, f)
+// 	})
+// }
+
+func FuzzReduce(f *testing.F) {
+	f.Fuzz(func(t *testing.T, buf []byte) {
+		fuzzer := fuzz.NewFromGoFuzz(buf)
+		f := func(agg int, item int, _ int) int {
+			return agg + item
+		}
+		var arr []int
+		var r int
+		fuzzer.Fuzz(&arr)
+		fuzzer.Fuzz(&r)
+		Reduce(arr, f, r)
+	})
+}
