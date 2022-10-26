@@ -9,6 +9,8 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+
+	fuzz "github.com/google/gofuzz"
 )
 
 func TestFilter(t *testing.T) {
@@ -752,4 +754,20 @@ func TestIsSortedByKey(t *testing.T) {
 		ret, _ := strconv.Atoi(s)
 		return ret
 	}))
+}
+
+func FuzzSlice(f *testing.F) {
+	// f.Add([]byte("a0000000700000000000000000000000\x00"))
+	f.Fuzz(func(t *testing.T, buf []byte) {
+		fuzzer := fuzz.NewFromGoFuzz(buf)
+		var (
+			f32 []float32
+			i int
+			j int
+		)
+		fuzzer.Fuzz(&f32)
+		fuzzer.Fuzz(&i)
+		fuzzer.Fuzz(&j)
+		Slice(f32, i, j)
+	})
 }
