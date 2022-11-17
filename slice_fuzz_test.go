@@ -98,6 +98,20 @@ func FuzzReduce(f *testing.F) {
 	})
 }
 
+func FuzzReduceRight(f *testing.F) {
+	f.Fuzz(func(t *testing.T, buf []byte) {
+		fuzzer := fuzz.NewFromGoFuzz(buf)
+		f := func(agg int, item int, _ int) int {
+			return agg + item
+		}
+		var arr []int
+		var r int
+		fuzzer.Fuzz(&arr)
+		fuzzer.Fuzz(&r)
+		ReduceRight(arr, f, r)
+	})
+}
+
 func FuzzReplace(f *testing.F) {
 	f.Fuzz(func(t *testing.T, buf []byte) {
 		fuzzer := fuzz.NewFromGoFuzz(buf)
