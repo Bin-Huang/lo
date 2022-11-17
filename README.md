@@ -143,6 +143,7 @@ Supported math helpers:
 
 Supported helpers for strings:
 
+- [RandomString](#randomstring)
 - [Substring](#substring)
 - [ChunkString](#chunkstring)
 - [RuneLength](#runelength)
@@ -159,9 +160,10 @@ Supported helpers for channels:
 - [ChannelDispatcher](#channeldispatcher)
 - [SliceToChannel](#slicetochannel)
 - [Generator](#generator)
-- [Batch](#batch)
-- [BatchWithTimeout](#batchwithtimeout)
-- [ChannelMerge](#channelmerge)
+- [Buffer](#buffer)
+- [BufferWithTimeout](#bufferwithtimeout)
+- [FanIn](#fanin)
+- [FanOut](#fanout)
 
 Supported intersection helpers:
 
@@ -1206,6 +1208,17 @@ sum := lo.SumBy(strings, func(item string) int {
 
 [[play](https://go.dev/play/p/Dz_a_7jN_ca)]
 
+### RandomString
+
+Returns a random string of the specified length and made of the specified charset.
+
+```go
+str := lo.RandomString(5, lo.LettersCharset)
+// example: "eIGbt"
+```
+
+[[play](https://go.dev/play/p/rRseOQVVum4)]
+
 ### Substring
 
 Return part of a string.
@@ -1437,16 +1450,16 @@ for v := range lo.Generator(2, generator) {
 // prints 1, then 2, then 3
 ```
 
-### Batch
+### Buffer
 
 Creates a slice of n elements from a channel. Returns the slice, the slice length, the read time and the channel status (opened/closed).
 
 ```go
 ch := lo.SliceToChannel(2, []int{1, 2, 3, 4, 5})
 
-items1, length1, duration1, ok1 := lo.Batch(ch, 3)
+items1, length1, duration1, ok1 := lo.Buffer(ch, 3)
 // []int{1, 2, 3}, 3, 0s, true
-items2, length2, duration2, ok2 := lo.Batch(ch, 3)
+items2, length2, duration2, ok2 := lo.Buffer(ch, 3)
 // []int{4, 5}, 2, 0s, false
 ```
 
@@ -1457,7 +1470,7 @@ ch := readFromQueue()
 
 for {
     // read 1k items
-    items, length, _, ok := lo.Batch(ch, 1000)
+    items, length, _, ok := lo.Buffer(ch, 1000)
 
     // do batching stuff
 
@@ -1467,7 +1480,7 @@ for {
 }
 ```
 
-### BatchWithTimeout
+### BufferWithTimeout
 
 Creates a slice of n elements from a channel, with timeout. Returns the slice, the slice length, the read time and the channel status (opened/closed).
 
@@ -1481,11 +1494,11 @@ generator := func(yield func(int)) {
 
 ch := lo.Generator(0, generator)
 
-items1, length1, duration1, ok1 := lo.BatchWithTimeout(ch, 3, 100*time.Millisecond)
+items1, length1, duration1, ok1 := lo.BufferWithTimeout(ch, 3, 100*time.Millisecond)
 // []int{1, 2}, 2, 100ms, true
-items2, length2, duration2, ok2 := lo.BatchWithTimeout(ch, 3, 100*time.Millisecond)
+items2, length2, duration2, ok2 := lo.BufferWithTimeout(ch, 3, 100*time.Millisecond)
 // []int{3, 4, 5}, 3, 75ms, true
-items3, length3, duration2, ok3 := lo.BatchWithTimeout(ch, 3, 100*time.Millisecond)
+items3, length3, duration2, ok3 := lo.BufferWithTimeout(ch, 3, 100*time.Millisecond)
 // []int{}, 0, 10ms, false
 ```
 
@@ -1497,7 +1510,7 @@ ch := readFromQueue()
 for {
     // read 1k items
     // wait up to 1 second
-    items, length, _, ok := lo.BatchWithTimeout(ch, 1000, 1*time.Second)
+    items, length, _, ok := lo.BufferWithTimeout(ch, 1000, 1*time.Second)
 
     // do batching stuff
 
@@ -1520,7 +1533,7 @@ consumer := func(c <-chan int) {
     for {
         // read 1k items
         // wait up to 1 second
-        items, length, _, ok := lo.BatchWithTimeout(ch, 1000, 1*time.Second)
+        items, length, _, ok := lo.BufferWithTimeout(ch, 1000, 1*time.Second)
 
         // do batching stuff
 
@@ -1535,16 +1548,28 @@ for i := range children {
 }
 ```
 
-### ChannelMerge
+### FanIn
 
-Collects messages from multiple input channels into a single buffered channel. Output messages has no priority.
+Merge messages from multiple input channels into a single buffered channel. Output messages has no priority. When all upstream channels reach EOF, downstream channel closes.
 
 ```go
 stream1 := make(chan int, 42)
 stream2 := make(chan int, 42)
 stream3 := make(chan int, 42)
 
-all := lo.ChannelMerge(100, stream1, stream2, stream3)
+all := lo.FanIn(100, stream1, stream2, stream3)
+// <-chan int
+```
+
+### FanOut
+
+Broadcasts all the upstream messages to multiple downstream channels. When upstream channel reach EOF, downstream channels close. If any downstream channels is full, broadcasting is paused.
+
+```go
+stream := make(chan int, 42)
+
+all := lo.FanOut(5, 100, stream)
+// [5]<-chan int
 ```
 
 ### Contains
