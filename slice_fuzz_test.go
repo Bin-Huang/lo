@@ -112,6 +112,16 @@ func FuzzReduceRight(f *testing.F) {
 	})
 }
 
+func FuzzForEach(f *testing.F) {
+	f.Fuzz(func(t *testing.T, buf []byte) {
+		fuzzer := fuzz.NewFromGoFuzz(buf)
+		f := func(agg int, item int) {}
+		var arr []int
+		fuzzer.Fuzz(&arr)
+		ForEach(arr, f)
+	})
+}
+
 func FuzzReplace(f *testing.F) {
 	f.Fuzz(func(t *testing.T, buf []byte) {
 		fuzzer := fuzz.NewFromGoFuzz(buf)
