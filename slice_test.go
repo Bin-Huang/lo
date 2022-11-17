@@ -763,7 +763,7 @@ func TestIsSortedByKey(t *testing.T) {
 }
 
 func FuzzSlice(f *testing.F) {
-	// f.Add([]byte("a0000000700000000000000000000000\x00"))
+	f.Add([]byte("a0000000700000000000000000000000\x00"))
 	f.Fuzz(func(t *testing.T, buf []byte) {
 		fuzzer := fuzz.NewFromGoFuzz(buf)
 		var (
@@ -826,18 +826,19 @@ func FuzzFlatMap(f *testing.F) {
 	})
 }
 
-// TODO: 
-// func FuzzTimes(f *testing.F) {
-// 	f.Fuzz(func(t *testing.T, buf []byte) {
-// 		fuzzer := fuzz.NewFromGoFuzz(buf)
-// 		var count int
-// 		f := func (index int) string {
-// 			return "x"
-// 		}
-// 		fuzzer.Fuzz(&count)
-// 		Times(count, f)
-// 	})
-// }
+func FuzzTimes(f *testing.F) {
+	// f.Add([]byte("0"))
+	f.Fuzz(func(t *testing.T, buf []byte) {
+		fuzzer := fuzz.NewFromGoFuzz(buf)
+		var count int
+		f := func (index int) string {
+			return "x"
+		}
+		fuzzer.Fuzz(&count)
+		println("count", count)
+		Times(count, f)
+	})
+}
 
 func FuzzReduce(f *testing.F) {
 	f.Fuzz(func(t *testing.T, buf []byte) {
@@ -850,5 +851,20 @@ func FuzzReduce(f *testing.F) {
 		fuzzer.Fuzz(&arr)
 		fuzzer.Fuzz(&r)
 		Reduce(arr, f, r)
+	})
+}
+
+func FuzzReplace(f *testing.F) {
+	f.Fuzz(func(t *testing.T, buf []byte) {
+		fuzzer := fuzz.NewFromGoFuzz(buf)
+		var arr []int
+		var old int
+		var new int
+		var n int
+		fuzzer.Fuzz(&arr)
+		fuzzer.Fuzz(&old)
+		fuzzer.Fuzz(&new)
+		fuzzer.Fuzz(&n)
+		Replace(arr, old, new, n)
 	})
 }
