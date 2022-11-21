@@ -70,20 +70,6 @@ func FuzzFlatMap(f *testing.F) {
 	})
 }
 
-func FuzzTimes(f *testing.F) {
-	// f.Add([]byte("0"))
-	f.Fuzz(func(t *testing.T, buf []byte) {
-		fuzzer := fuzz.NewFromGoFuzz(buf)
-		var count int
-		f := func (index int) string {
-			return "x"
-		}
-		fuzzer.Fuzz(&count)
-		println("count", count)
-		Times(count, f)
-	})
-}
-
 func FuzzReduce(f *testing.F) {
 	f.Fuzz(func(t *testing.T, buf []byte) {
 		fuzzer := fuzz.NewFromGoFuzz(buf)
@@ -119,6 +105,117 @@ func FuzzForEach(f *testing.F) {
 		var arr []int
 		fuzzer.Fuzz(&arr)
 		ForEach(arr, f)
+	})
+}
+
+func FuzzTimes(f *testing.F) {
+	// TODO:
+	// f.Add([]byte("0"))
+	f.Fuzz(func(t *testing.T, buf []byte) {
+		fuzzer := fuzz.NewFromGoFuzz(buf)
+		var count int
+		f := func (index int) string {
+			return "x"
+		}
+		fuzzer.Fuzz(&count)
+		println("count", count)
+		Times(count, f)
+	})
+}
+
+func FuzzUniq(f *testing.F) {
+	f.Fuzz(func(t *testing.T, buf []byte) {
+		fuzzer := fuzz.NewFromGoFuzz(buf)
+		var arr []int
+		fuzzer.Fuzz(&arr)
+		Uniq(arr)
+	})
+}
+
+func FuzzUniqBy(f *testing.F) {
+	f.Add([]byte("0"))
+	f.Fuzz(func(t *testing.T, buf []byte) {
+		fuzzer := fuzz.NewFromGoFuzz(buf)
+		var arr []int
+		f := func (index int) string {
+			return "x"
+		}
+		fuzzer.Fuzz(&arr)
+		UniqBy(arr, f)
+	})
+}
+
+func FuzzGroupBy(f *testing.F) {
+	f.Fuzz(func(t *testing.T, buf []byte) {
+		fuzzer := fuzz.NewFromGoFuzz(buf)
+		var arr []int
+		f := func (index int) string {
+			return "x"
+		}
+		fuzzer.Fuzz(&arr)
+		GroupBy(arr, f)
+	})
+}
+
+func FuzzChunk(f *testing.F) {
+	f.Fuzz(func(t *testing.T, buf []byte) {
+		fuzzer := fuzz.NewFromGoFuzz(buf)
+		var arr []int
+		var count int
+		fuzzer.Fuzz(&arr)
+		fuzzer.Fuzz(&count)
+		if count > 0 {
+			Chunk(arr, count)
+		}
+	})
+}
+
+func FuzzPartitionBy(f *testing.F) {
+	f.Fuzz(func(t *testing.T, buf []byte) {
+		fuzzer := fuzz.NewFromGoFuzz(buf)
+		var arr []int
+		f := func (index int) string {
+			return "x"
+		}
+		fuzzer.Fuzz(&arr)
+		PartitionBy(arr, f)
+	})
+}
+
+func FuzzFlatten(f *testing.F) {
+	f.Fuzz(func(t *testing.T, buf []byte) {
+		fuzzer := fuzz.NewFromGoFuzz(buf)
+		var arr [][]int
+		fuzzer.Fuzz(&arr)
+		Flatten(arr)
+	})
+}
+
+func FuzzInterleave(f *testing.F) {
+	f.Fuzz(func(t *testing.T, buf []byte) {
+		fuzzer := fuzz.NewFromGoFuzz(buf)
+		var arr [][]int
+		fuzzer.Fuzz(&arr)
+		Interleave(arr)
+	})
+}
+
+func FuzzShuffle(f *testing.F) {
+	f.Fuzz(func(t *testing.T, buf []byte) {
+		fuzzer := fuzz.NewFromGoFuzz(buf)
+		var arr [][]int
+		fuzzer.Fuzz(&arr)
+		Shuffle(arr)
+	})
+}
+
+func FuzzReverse(f *testing.F) {
+	f.Add([]byte("0"))
+	f.Fuzz(func(t *testing.T, buf []byte) {
+		fuzzer := fuzz.NewFromGoFuzz(buf)
+		var arr []int
+		fuzzer.Fuzz(&arr)
+		Reverse(arr)
 	})
 }
 
