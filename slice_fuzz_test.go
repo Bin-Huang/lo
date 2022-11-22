@@ -219,6 +219,22 @@ func FuzzReverse(f *testing.F) {
 	})
 }
 
+type Int int
+func (i Int) Clone() Int  {
+	return i
+}
+func FuzzFill(f *testing.F) {
+	f.Add([]byte("0"))
+	f.Fuzz(func(t *testing.T, buf []byte) {
+		fuzzer := fuzz.NewFromGoFuzz(buf)
+		var arr []Int
+		var i Int
+		fuzzer.Fuzz(&arr)
+		fuzzer.Fuzz(&i)
+		Fill(arr, i)
+	})
+}
+
 func FuzzReplace(f *testing.F) {
 	f.Fuzz(func(t *testing.T, buf []byte) {
 		fuzzer := fuzz.NewFromGoFuzz(buf)
