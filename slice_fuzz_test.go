@@ -261,6 +261,97 @@ func FuzzRepeatBy(f *testing.F) {
 	})
 }
 
+func FuzzKeyBy(f *testing.F) {
+	// f.Add([]byte("0"))
+	// TODO:
+	f.Fuzz(func(t *testing.T, buf []byte) {
+		fuzzer := fuzz.NewFromGoFuzz(buf)
+		var arr []int
+		fuzzer.Fuzz(&arr)
+		KeyBy(arr, func(i int) int {
+			return i + 1
+		})
+	})
+}
+
+func FuzzAssociate(f *testing.F) {
+	// f.Add([]byte("0"))
+	// TODO:
+	f.Fuzz(func(t *testing.T, buf []byte) {
+		fuzzer := fuzz.NewFromGoFuzz(buf)
+		var arr []string
+		fuzzer.Fuzz(&arr)
+		Associate(arr, func(i string) (string, string) {
+			return i, i + "kk"
+		})
+	})
+}
+
+func FuzzSliceToMap(f *testing.F) {
+	// f.Add([]byte("0"))
+	// TODO:
+	f.Fuzz(func(t *testing.T, buf []byte) {
+		fuzzer := fuzz.NewFromGoFuzz(buf)
+		var arr []string
+		fuzzer.Fuzz(&arr)
+		SliceToMap(arr, func(i string) (string, string) {
+			return i, i + "kk"
+		})
+	})
+}
+
+func FuzzDrop(f *testing.F) {
+	// f.Add([]byte("0"))
+	// TODO:
+	f.Fuzz(func(t *testing.T, buf []byte) {
+		fuzzer := fuzz.NewFromGoFuzz(buf)
+		var arr []int
+		var n int
+		fuzzer.Fuzz(&arr)
+		fuzzer.Fuzz(&n)
+		Drop(arr, n)
+	})
+}
+
+func FuzzDropRight(f *testing.F) {
+	// f.Add([]byte("0"))
+	// TODO:
+	f.Fuzz(func(t *testing.T, buf []byte) {
+		fuzzer := fuzz.NewFromGoFuzz(buf)
+		var arr []int
+		var n int
+		fuzzer.Fuzz(&arr)
+		fuzzer.Fuzz(&n)
+		DropRight(arr, n)
+	})
+}
+
+func FuzzDropWhile(f *testing.F) {
+	// f.Add([]byte("0"))
+	// TODO:
+	f.Fuzz(func(t *testing.T, buf []byte) {
+		fuzzer := fuzz.NewFromGoFuzz(buf)
+		var arr []int
+		fuzzer.Fuzz(&arr)
+		DropWhile(arr, func(i int) bool {
+			return i % 2 == 0
+		})
+	})
+}
+
+func FuzzDropRightWhile(f *testing.F) {
+	// f.Add([]byte("0"))
+	// TODO:
+	f.Fuzz(func(t *testing.T, buf []byte) {
+		fuzzer := fuzz.NewFromGoFuzz(buf)
+		var arr []int
+		fuzzer.Fuzz(&arr)
+		DropRightWhile(arr, func(i int) bool {
+			return i % 2 == 0
+		})
+	})
+}
+
 func FuzzReplace(f *testing.F) {
 	f.Fuzz(func(t *testing.T, buf []byte) {
 		fuzzer := fuzz.NewFromGoFuzz(buf)
