@@ -6,22 +6,6 @@ import (
 	fuzz "github.com/google/gofuzz"
 )
 
-func FuzzSlice(f *testing.F) {
-	f.Add([]byte("a0000000700000000000000000000000\x00"))
-	f.Fuzz(func(t *testing.T, buf []byte) {
-		fuzzer := fuzz.NewFromGoFuzz(buf)
-		var (
-			f32 []float32
-			i int
-			j int
-		)
-		fuzzer.Fuzz(&f32)
-		fuzzer.Fuzz(&i)
-		fuzzer.Fuzz(&j)
-		Slice(f32, i, j)
-	})
-}
-
 func FuzzFilter(f *testing.F) {
 	f.Fuzz(func(t *testing.T, buf []byte) {
 		fuzzer := fuzz.NewFromGoFuzz(buf)
@@ -369,6 +353,70 @@ func FuzzCount(f *testing.F) {
 	})
 }
 
+func FuzzCountBy(f *testing.F) {
+	f.Fuzz(func(t *testing.T, buf []byte) {
+		fuzzer := fuzz.NewFromGoFuzz(buf)
+		var arr []int
+		var n int
+		fuzzer.Fuzz(&arr)
+		fuzzer.Fuzz(&n)
+		CountBy(arr, func(i int) bool {
+			return i % 2 == 0
+		})
+	})
+}
+
+func FuzzCountValues(f *testing.F) {
+	f.Fuzz(func(t *testing.T, buf []byte) {
+		fuzzer := fuzz.NewFromGoFuzz(buf)
+		var arr []int
+		fuzzer.Fuzz(&arr)
+		CountValues(arr)
+	})
+}
+
+func FuzzCountValuesBy(f *testing.F) {
+	f.Fuzz(func(t *testing.T, buf []byte) {
+		fuzzer := fuzz.NewFromGoFuzz(buf)
+		var arr []int
+		var n int
+		fuzzer.Fuzz(&arr)
+		fuzzer.Fuzz(&n)
+		CountValuesBy(arr, func(i int) bool {
+			return i % 2 == 0
+		})
+	})
+}
+
+func FuzzSubset(f *testing.F) {
+	f.Fuzz(func(t *testing.T, buf []byte) {
+		fuzzer := fuzz.NewFromGoFuzz(buf)
+		var arr []int
+		var offset int
+		var length uint
+		fuzzer.Fuzz(&arr)
+		fuzzer.Fuzz(&offset)
+		fuzzer.Fuzz(&length)
+		Subset(arr, offset, length)
+	})
+}
+
+func FuzzSlice(f *testing.F) {
+	f.Add([]byte("a0000000700000000000000000000000\x00"))
+	f.Fuzz(func(t *testing.T, buf []byte) {
+		fuzzer := fuzz.NewFromGoFuzz(buf)
+		var (
+			f32 []float32
+			i int
+			j int
+		)
+		fuzzer.Fuzz(&f32)
+		fuzzer.Fuzz(&i)
+		fuzzer.Fuzz(&j)
+		Slice(f32, i, j)
+	})
+}
+
 func FuzzReplace(f *testing.F) {
 	f.Fuzz(func(t *testing.T, buf []byte) {
 		fuzzer := fuzz.NewFromGoFuzz(buf)
@@ -381,5 +429,47 @@ func FuzzReplace(f *testing.F) {
 		fuzzer.Fuzz(&new)
 		fuzzer.Fuzz(&n)
 		Replace(arr, old, new, n)
+	})
+}
+
+func FuzzReplaceAll(f *testing.F) {
+	f.Fuzz(func(t *testing.T, buf []byte) {
+		fuzzer := fuzz.NewFromGoFuzz(buf)
+		var arr []int
+		var old int
+		var new int
+		fuzzer.Fuzz(&arr)
+		fuzzer.Fuzz(&old)
+		fuzzer.Fuzz(&new)
+		ReplaceAll(arr, old, new)
+	})
+}
+
+func FuzzCompact(f *testing.F) {
+	f.Fuzz(func(t *testing.T, buf []byte) {
+		fuzzer := fuzz.NewFromGoFuzz(buf)
+		var arr []int
+		fuzzer.Fuzz(&arr)
+		Compact(arr)
+	})
+}
+
+func FuzzIsSorted(f *testing.F) {
+	f.Fuzz(func(t *testing.T, buf []byte) {
+		fuzzer := fuzz.NewFromGoFuzz(buf)
+		var arr []int
+		fuzzer.Fuzz(&arr)
+		IsSorted(arr)
+	})
+}
+
+func FuzzIsSortedByKey(f *testing.F) {
+	f.Fuzz(func(t *testing.T, buf []byte) {
+		fuzzer := fuzz.NewFromGoFuzz(buf)
+		var arr []int
+		fuzzer.Fuzz(&arr)
+		IsSortedByKey(arr, func(i int) int {
+			return i
+		})
 	})
 }
