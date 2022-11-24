@@ -352,6 +352,32 @@ func FuzzDropRightWhile(f *testing.F) {
 	})
 }
 
+func FuzzReject(f *testing.F) {
+	// f.Add([]byte("0"))
+	// TODO:
+	f.Fuzz(func(t *testing.T, buf []byte) {
+		fuzzer := fuzz.NewFromGoFuzz(buf)
+		var arr []int
+		fuzzer.Fuzz(&arr)
+		Reject(arr, func(v int, i int) bool {
+			return i % 2 == 0
+		})
+	})
+}
+
+func FuzzCount(f *testing.F) {
+	// f.Add([]byte("0"))
+	// TODO:
+	f.Fuzz(func(t *testing.T, buf []byte) {
+		fuzzer := fuzz.NewFromGoFuzz(buf)
+		var arr []int
+		var n int
+		fuzzer.Fuzz(&arr)
+		fuzzer.Fuzz(&n)
+		Count(arr, n)
+	})
+}
+
 func FuzzReplace(f *testing.F) {
 	f.Fuzz(func(t *testing.T, buf []byte) {
 		fuzzer := fuzz.NewFromGoFuzz(buf)
