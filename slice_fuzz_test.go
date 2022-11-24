@@ -235,6 +235,32 @@ func FuzzFill(f *testing.F) {
 	})
 }
 
+func FuzzRepeat(f *testing.F) {
+	// f.Add([]byte("0"))
+	// TODO:
+	f.Fuzz(func(t *testing.T, buf []byte) {
+		fuzzer := fuzz.NewFromGoFuzz(buf)
+		var i int
+		var j Int
+		fuzzer.Fuzz(&i)
+		fuzzer.Fuzz(&j)
+		Repeat(i, j)
+	})
+}
+
+func FuzzRepeatBy(f *testing.F) {
+	// f.Add([]byte("0"))
+	// TODO:
+	f.Fuzz(func(t *testing.T, buf []byte) {
+		fuzzer := fuzz.NewFromGoFuzz(buf)
+		var i int
+		fuzzer.Fuzz(&i)
+		RepeatBy(i, func(index int) int {
+			return index
+		})
+	})
+}
+
 func FuzzReplace(f *testing.F) {
 	f.Fuzz(func(t *testing.T, buf []byte) {
 		fuzzer := fuzz.NewFromGoFuzz(buf)
